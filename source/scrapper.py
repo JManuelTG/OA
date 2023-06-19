@@ -27,15 +27,44 @@ def get_table_data(url):
     table = soup.find("table")
     rows = table.find_all("tr")
     list_of_data = []
+
     for line in rows:
         cells = line.find_all("td")
-        if len(cells) >= 7:
+
+        if len(cells) >= 17:
             row_data = [cells[0].get_text(strip=True), cells[1].get_text(strip=True),
-                        cells[2].get_text(strip=True), cells[5].get_text(strip=True),
-                        cells[6].get_text(strip=True), cells[9].get_text(strip=True),
-                        cells[10].get_text(strip=True), cells[16].get_text(strip=True)]
+                        cells[2].get_text(strip=True), cells[3].get_text(strip=True),
+                        cells[5].get_text(strip=True), cells[6].get_text(strip=True),
+                        cells[9].get_text(strip=True), cells[10].get_text(strip=True),
+                        cells[-1].get_text(strip=True)]
             list_of_data.append(row_data)
+
+            if len(cells) >= 23:
+                row_data = [cells[0].get_text(strip=True), cells[1].get_text(strip=True),
+                            "^^^^", cells[3].get_text(strip=True),
+                            "^", "^",
+                            cells[15].get_text(strip=True), cells[16].get_text(strip=True),
+                            cells[-1].get_text(strip=True)]
+                list_of_data.append(row_data)
+
+                if len(cells) >= 29:
+                    row_data = [cells[0].get_text(strip=True), cells[1].get_text(strip=True),
+                                "^^^^", cells[3].get_text(strip=True),
+                                "^", "^",
+                                cells[21].get_text(strip=True), cells[22].get_text(strip=True),
+                                cells[-1].get_text(strip=True)]
+                    list_of_data.append(row_data)
+
+                    if len(cells) >= 35:
+                        row_data = [cells[0].get_text(strip=True), cells[1].get_text(strip=True),
+                                    "^^^^", cells[3].get_text(strip=True),
+                                    "^", "^",
+                                    cells[27].get_text(strip=True), cells[28].get_text(strip=True),
+                                    cells[-1].get_text(strip=True)]
+                        list_of_data.append(row_data)
+    
     return list_of_data
+
 
 def show_elapsed_time(current_time):
     """
@@ -68,8 +97,12 @@ def format_value_with_color(data):
                 return Fore.GREEN + str(data)
             else:
                 return Fore.RED + str(data)
-        elif re.search(r"^[A-Z]{1,2}\d+", data):
+        elif re.search(r"^[A-Z]\d{1,2}$", data):
+            return Fore.YELLOW + str(data)
+        elif re.search(r"^[A-Z]{1,2}\d{3,4}$", data):
             return Fore.BLUE + str(data)
+        elif re.search(r"^\d{4}-\d{4}", data):
+            return Fore.CYAN + str(data)
         else:
             return Fore.WHITE + str(data)
     except ValueError:
@@ -117,7 +150,7 @@ if __name__ == "__main__":
 
     signal.signal(signal.SIGINT, signal_handler)
     iter_count = 1
-    headers = ["NRC", "CLAVE", "MATERIA", "CUPOS", "DIS", "HORARIO", "DIAS", "MAESTRO"]
+    headers = ["NRC", "CLAVE", "MATERIA", "SECCION", "CUPOS", "DIS", "HORARIO", "DIAS", "MAESTRO"]
 
     try:
         start_time = time.time()
